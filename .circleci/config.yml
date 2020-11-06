@@ -14,8 +14,7 @@ jobs:
           command:
             ls &&
             echo $CODE &&
-            echo hello &&
-            echo ${SOBBOSACHI}
+            echo hello
   print_world:
     environment:
       CODE: 567845678567845678
@@ -27,6 +26,11 @@ jobs:
             ls &&
             echo $CODE &&
             echo world
+  envir_print:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: echo ${SOBBOSACHI}
 
 
 
@@ -37,3 +41,4 @@ workflows:
       - print_world:
           requires:
             - print_hello
+      - envir_print
