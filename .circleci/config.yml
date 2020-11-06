@@ -12,7 +12,7 @@ jobs:
           command:
             ls &&
             echo $CODE &&
-            echo hello &&
+            echo hello
   print_world:
     environment:
       CODE: 567845678567845678
@@ -23,7 +23,7 @@ jobs:
           command:
             ls &&
             echo $CODE &&
-            echo world &&
+            echo world
 
 
 
