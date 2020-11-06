@@ -30,7 +30,9 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo ${SOBBOSACHI}
+      - run:
+          command: 
+            echo ${SOBBOSACHI}
 
 
 
