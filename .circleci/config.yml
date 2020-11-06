@@ -10,7 +10,7 @@ jobs:
     docker:
 # Primary container image where all steps run.
       - image: circleci/node:13.8.0
-       steps:
+      steps:
       run: echo Hello!
   print_world:
     docker:
