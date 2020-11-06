@@ -25,9 +25,9 @@ workflows:
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - welcome/run
-      - print_hello/run
-      - print_world/run
+      -welcome/run
+      -print_hello/run
+      -print_world/run
       requires:
         -print_world
 
