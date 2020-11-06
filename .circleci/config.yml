@@ -15,7 +15,7 @@ jobs:
             ls &&
             echo $CODE &&
             echo hello &&
-            echo $SOBBOSACHI
+            echo ${SOBBOSACHI}
   print_world:
     environment:
       CODE: 567845678567845678
