@@ -28,6 +28,4 @@ workflows:
       -welcome/run
       -print_hello/run
       -print_world/run
-      requires:
-        -print_world
 
