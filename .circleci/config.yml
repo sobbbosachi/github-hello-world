@@ -5,10 +5,10 @@ jobs:
   print_hello:
     environment:
       CODE: 123456789
-      docker:
-        - image: circleci/node:13.8.0
-      steps:
-        - run:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run:
           command:
             echo $CODE
             echo print_hello
