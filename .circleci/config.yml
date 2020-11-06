@@ -8,7 +8,17 @@ orbs:
 
 jobs:
   print_hello:
-  print_world:
+    environment:
+      CODE: 123456789
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - run:
+          command:
+            echo $CODE
+            echo print_hello
+            ls
+
 
 
 
@@ -18,5 +28,3 @@ workflows:
     # Run the welcome/run job in its own container
     jobs:
       - welcome/run
-      - print_hello/run
-      - print_world/run
