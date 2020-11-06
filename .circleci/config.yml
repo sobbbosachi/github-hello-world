@@ -12,6 +12,7 @@ jobs:
       -image: circleci/node:13.8.0
       steps:
       run: echo Hello!
+
   print_world:
     docker:
       # Primary container image where all steps run.
@@ -19,13 +20,14 @@ jobs:
       steps:
       run: echo world!
 
-
-
 workflows:
   # Name the workflow "welcome"
   welcome:
     # Run the welcome/run job in its own container
     jobs:
       - welcome/run
-      - print_hello
-      - print_world
+      - print_hello/run
+      - print_world/run
+      requires:
+        -print_world
+
