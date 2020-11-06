@@ -10,10 +10,20 @@ jobs:
     steps:
       - run:
           command:
-            echo $CODE
-            echo print_hello
             ls
-
+            echo $CODE
+            echo hello
+  print_world:
+    environment:
+      CODE: 567845678567845678
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run:
+          command:
+            ls
+            echo $CODE
+            echo world
 
 
 
@@ -22,3 +32,6 @@ workflows:
   welcome:
     jobs:
       - print_hello
+      - print_world:
+          requires:
+            - print_hello
