@@ -8,16 +8,16 @@ orbs:
 jobs:
   print_hello:
     docker:
-      # Primary container image where all steps run.
-        - image: circleci/node:13.8.0
-        steps:
-        run: echo Hello!
+# Primary container image where all steps run.
+      - image: circleci/node:13.8.0
+       steps:
+      run: echo Hello!
   print_world:
     docker:
       # Primary container image where all steps run.
-        - image: circleci/node:13.8.0
-        steps:
-        run: echo world!
+      - image: circleci/node:13.8.0
+      steps:
+      run: echo world!
 
 
 
