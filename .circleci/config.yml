@@ -10,9 +10,9 @@ jobs:
     steps:
       - run:
           command:
-            ls
-            echo $CODE
-            echo hello
+            ls &&
+            echo $CODE &&
+            echo hello &&
   print_world:
     environment:
       CODE: 567845678567845678
@@ -21,9 +21,9 @@ jobs:
     steps:
       - run:
           command:
-            ls
-            echo $CODE
-            echo world
+            ls &&
+            echo $CODE &&
+            echo world &&
 
 
 
