@@ -14,7 +14,8 @@ jobs:
           command:
             ls &&
             echo $CODE &&
-            echo hello
+            echo hello &&
+            echo SOBBOSACHI
   print_world:
     environment:
       CODE: 567845678567845678
