@@ -10,7 +10,7 @@ jobs:
     steps:
       - run:
           command:
-            echo "Sobbosachi Mojumder" && date &&
+            cd .. && mkdir tmp && pwd &&
             echo "hello world" > ~/output.txt
       - persist_to_workspace:
           root: ~/
