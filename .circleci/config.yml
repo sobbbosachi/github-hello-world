@@ -15,6 +15,9 @@ commands:
         default: "Hello World"
     steps:
       - run: echo << parameters.to >>
+  print_pipeline_id2:
+    steps:
+      - run: echo ${CIRCLE_WORKFLOW_ID}
 
 jobs:
   save_hello_world_output:
