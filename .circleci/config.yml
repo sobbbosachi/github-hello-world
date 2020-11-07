@@ -15,6 +15,9 @@ commands:
         default: "Hello World"
     steps:
       - run: echo << parameters.to >>
+  print_pipeline_id2:
+    steps:
+      - run: echo ${CIRCLE_WORKFLOW_ID}
 
 jobs:
   save_hello_world_output:
@@ -45,6 +48,10 @@ jobs:
       - print_pipeline_id:
           to: $CIRCLE_WORKFLOW_ID
 
+  print_pipeline_id_job2:
+    <<: *defaults
+    steps:
+      - print_pipeline_id2:
 
 
   envir_print:
@@ -58,7 +65,7 @@ jobs:
 
 
 workflows:
-  welcome:
+  shovon_workflow:
     jobs:
       - save_hello_world_output
       - print_output_file:
@@ -66,3 +73,4 @@ workflows:
             - save_hello_world_output
       - envir_print
       - print_pipeline_id_job
+      - print_pipeline_id_job2
