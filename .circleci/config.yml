@@ -39,10 +39,10 @@ jobs:
             pwd &&
             cat /home/circleci/tmp/output.txt
 
-  print_pipeline_id:
+  print_pipeline_id_job:
     <<: *defaults
     steps:
-      - sayhello:
+      - print_pipeline_id:
           to: $CIRCLE_WORKFLOW_ID
 
 
@@ -65,4 +65,4 @@ workflows:
           requires:
             - save_hello_world_output
       - envir_print
-      - print_pipeline_id
+      - print_pipeline_id_job
