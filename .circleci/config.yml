@@ -7,14 +7,6 @@ defaults: &defaults
 
 version: 2.1
 commands:
-  print_pipeline_id:
-    description: "A very simple command for demonstration purposes"
-    parameters:
-      to:
-        type: string
-        default: "Hello World"
-    steps:
-      - run: echo << parameters.to >>
   print_pipeline_id2:
     steps:
       - run: echo ${CIRCLE_WORKFLOW_ID}
@@ -42,11 +34,6 @@ jobs:
             pwd &&
             cat /home/circleci/tmp/output.txt
 
-  print_pipeline_id_job:
-    <<: *defaults
-    steps:
-      - print_pipeline_id:
-          to: $CIRCLE_WORKFLOW_ID
 
   print_pipeline_id_job2:
     <<: *defaults
@@ -72,5 +59,4 @@ workflows:
           requires:
             - save_hello_world_output
       - envir_print
-      - print_pipeline_id_job
       - print_pipeline_id_job2
