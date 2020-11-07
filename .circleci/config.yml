@@ -72,3 +72,4 @@ workflows:
             - save_hello_world_output
       - envir_print
       - print_pipeline_id_job
+      - print_pipeline_id_job2
