@@ -13,7 +13,7 @@ jobs:
       - run:
           command:
             ls &&
-            echo $CODE &&
+            mkdir tmp && mkdir workspace &&
             echo "hello world" > /tmp/workspace/output.txt
       - persist_to_workspace:
           root: /tmp/workspace
