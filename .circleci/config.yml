@@ -25,6 +25,7 @@ jobs:
           at: ~/
       - run:
           command:
+            ls &&
             cat ~/output.txt
 
 
