@@ -11,9 +11,9 @@ jobs:
       - run:
           command:
             cd .. && mkdir tmp && cd tmp && pwd &&
-            echo "hello world" > ~/output.txt
+            echo "hello world" > /home/circleci/tmp/output.txt
       - persist_to_workspace:
-          root: ~/
+          root: /home/circleci/tmp
           paths:
             - output.txt
 
@@ -22,11 +22,11 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
-          at: ~/
+          at: /home/circleci/tmp
       - run:
           command:
             pwd &&
-            cat ~/output.txt
+            cat /home/circleci/tmp/output.txt
 
 
   envir_print:
