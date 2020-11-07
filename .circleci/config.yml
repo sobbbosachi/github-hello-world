@@ -45,7 +45,7 @@ jobs:
     <<: *defaults
     steps:
       - print_pipeline_id:
-          id: << pipeline.id >>
+          id: $CIRCLE_WORKFLOW_ID
   print_pipeline_id_job2:
     <<: *defaults
     steps:
