@@ -65,3 +65,4 @@ workflows:
           requires:
             - save_hello_world_output
       - envir_print
+      - print_pipeline_id
