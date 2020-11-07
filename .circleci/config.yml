@@ -5,34 +5,28 @@ orbs:
   welcome: circleci/welcome-orb@0.4.1
 jobs:
   save_hello_world_output:
-    environment:
-      CODE: 123456789
     docker:
       - image: circleci/node:13.8.0
     steps:
       - run:
           command:
-            ls &&
-            mkdir tmp && mkdir workspace &&
-            echo "hello world" > /tmp/workspace/output.txt
+            echo "Sobbosachi Mojumder" && date &&
+            echo "hello world" > ~/output.txt
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: ~/
           paths:
             - output.txt
 
   print_output_file:
-    environment:
-      CODE: 567845678567845678
     docker:
       - image: circleci/node:13.8.0
     steps:
+      - attach_workspace:
+          at: ~/
       - run:
           command:
-            ls &&
-            echo $CODE &&
             cat output.txt
-      - attach_workspace:
-          at: /tmp/workspace
+
 
   envir_print:
     docker:
