@@ -28,7 +28,7 @@ jobs:
       - run:
           command:
             cd .. && mkdir tmp && cd tmp && pwd &&
-            docker run --rm -it amazon/aws-cli && docker run --rm -it amazon/aws-cli --version &&
+            docker run --rm -it amazon/aws-cli &&
             aws ec2 describe-instances  --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> /home/circleci/tmp/output.txt
       - persist_to_workspace:
           root: /home/circleci/tmp
