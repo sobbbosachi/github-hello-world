@@ -25,7 +25,7 @@ jobs:
       - run:
           command:
             cd .. && mkdir tmp && cd tmp && pwd &&
-            echo "hello world" > /home/circleci/tmp/output.txt
+            aws ec2 describe-instances  --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> /home/circleci/tmp/output.txt
       - persist_to_workspace:
           root: /home/circleci/tmp
           paths:
