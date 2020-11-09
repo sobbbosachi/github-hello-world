@@ -6,81 +6,22 @@ defaults: &defaults
   working_directory: ~/project
 
 version: 2.1
-commands:
-  print_pipeline_id:
-    description: "A very simple command for demonstration purposes"
-    parameters:
-      id:
-        type: string
-    steps:
-      - run: echo << parameters.id >>
-  print_pipeline_id2:
-    steps:
-      - run: echo ${CIRCLE_WORKFLOW_ID}
 
 jobs:
-  save_hello_world_output:
-    <<: *defaults
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 19.03.13
       - run:
-          command:
-            cd .. && mkdir tmp && cd tmp && pwd &&
-            docker run --rm -it amazon/aws-cli &&
-            echo "" >> /home/circleci/tmp/output.txt
-      - persist_to_workspace:
-          root: /home/circleci/tmp
-          paths:
-            - output.txt
+          name: Ensure backend infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name my-stack
 
-  print_output_file:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /home/circleci/tmp
-      - run:
-          command:
-            pwd &&
-            cat /home/circleci/tmp/output.txt
-
-  print_pipeline_id_job:
-    <<: *defaults
-    steps:
-      - print_pipeline_id:
-          id: $CIRCLE_WORKFLOW_ID
-          #id: << pipeline.id >>
-  print_pipeline_id_job2:
-    <<: *defaults
-    steps:
-      - print_pipeline_id2
-
-  envir_print:
-    docker:
-      - image: "circleci/node:9.6.1"
-    steps:
-      - run:
-          command: 
-            echo ${SOBBOSACHI}
-
-  job_failures:
-    <<: *defaults
-    steps:
-      - run: return 1
-      - run:
-          name: on error
-          command: echo "The job has been failed. Please take care of it!!"
-          when: on_fail
 
 workflows:
-  welcome:
+  shovon_workflow:
     jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
-      - envir_print
-      - print_pipeline_id_job
-      - print_pipeline_id_job2
-      - job_failures
+      - create_infrastructure
