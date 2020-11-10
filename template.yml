@@ -1,10 +1,6 @@
 Description: >
     Sobbosachi Mojumder / Project 2: Deploy a high-availability web app using CloudFormation
 
-Parameters:
-    InstanceType:
-        Description: EC2 instance
-        Type: String
 Resources:
   Ec2Instance:
     Type: 'AWS::EC2::Instance'
@@ -13,8 +9,9 @@ Resources:
       - Ref: InstanceSecurityGroup
       KeyName: Shovon
       ImageId: 'ami-0e1ce3e0deb8896d2' # you may need to find out what instance types are available in your region - use https://cloud-images.ubuntu.com/locator/ec2/
-      InstanceType: 
-      - Ref: InstanceType  
+      InstanceType:
+        Description: EC2 instance
+        Type: String  
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
