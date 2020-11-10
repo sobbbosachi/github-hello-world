@@ -20,7 +20,7 @@ jobs:
             aws cloudformation deploy \
             --template-file cloudfront.yml \
             --stack-name production-distro \
-            --parameter-overrides PipelineID="elasticbeanstalk-eu-central-1-669482944502" \
+            --parameter-overrides PipelineID="${S3_BUCKET_NAME}" \
             --tags project=udapeople &
   
   create_and_deploy_front_end:
@@ -34,8 +34,8 @@ jobs:
             aws cloudformation deploy \
             --template-file bucket.yml \
             --stack-name "${CIRCLE_WORKFLOW_ID}" \
-            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID:0:7}" --delete
+            --parameter-overrides PipelineID="${S3_BUCKET_NAME:0:7}"
+      - run: aws s3 sync . s3://"${S3_BUCKET_NAME:0:7}" --delete
 
   get_last_deployment_id:
     docker:
