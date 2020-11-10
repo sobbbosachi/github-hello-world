@@ -22,12 +22,52 @@ jobs:
             --stack-name production-distro \
             --parameter-overrides PipelineID="${S3_BUCKET_NAME}" \
             --tags project=udapeople &
+  
+  create_and_deploy_front_end:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: create_and_deploy_front_end
+          command: |
+            aws cloudformation deploy \
+            --template-file bucket.yml \
+            --stack-name "${CIRCLE_WORKFLOW_ID}" \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
+
+  get_last_deployment_id:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: get_last_deployment_id
+          command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+            --no-paginate --output text
+
+  promote_to_production:
+      docker:
+      - image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: create_and_deploy_front_end
+            command: |
+              aws cloudformation deploy \
+              --template-file cloudfront.yml \
+              --stack-name production-distro \
+              --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+
+
 
 workflows:
   my_workflow:
     jobs:
-      - create_infrastructure:
-          filters:
-            branches:
-              only:
-                - master
+      - create_infrastructure
+      - create_and_deploy_front_end
+      - get_last_deployment_id
+      - promote_to_production
