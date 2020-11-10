@@ -67,10 +67,10 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - create_infrastructure:
+      - create_infrastructure
+      - get_last_deployment_id:
           requires:
             - create_infrastructure
-      - get_last_deployment_id
       - create_and_deploy_front_end
       - promote_to_production:
           requires: 
