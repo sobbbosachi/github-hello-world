@@ -14,7 +14,7 @@ Resources:
       KeyName: Shovon
       ImageId: 'ami-0e1ce3e0deb8896d2' # you may need to find out what instance types are available in your region - use https://cloud-images.ubuntu.com/locator/ec2/
       InstanceType: 
-      - Ref: 'InstanceType'  
+      - Ref: InstanceType  
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
