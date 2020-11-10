@@ -1,4 +1,11 @@
 version: 2.1
+commands:
+  destroy_environment:
+    steps:
+      - run:
+          name: Destroy environment
+          command: |
+            aws cloudformation delete-stack --stack-name prod-${CIRCLECI_WORKFLOW_ID}
 
 jobs:
   configure_infrastructure:
@@ -19,19 +26,16 @@ jobs:
 
   smoke_test:
       docker:
-        - image: alpine:latest
+        - image: amazon/aws-cli
       steps:
-        - run: apk add --update curl
+        - checkout
         - run:
-            name: smoke test.
+            name: simulate error
             command: |
-              URL="https://blog.udacity.com/"
-              if curl -s --head ${URL} # test if blog.udacity. com exists
-              then
-               return 0
-              else
                return 1
-              fi
+        - destroy_environment
+      when: on_fail
+
 
 workflows:
   my_workflow:
