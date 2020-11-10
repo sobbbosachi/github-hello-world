@@ -20,7 +20,7 @@ jobs:
             aws cloudformation deploy \
             --template-file cloudfront.yml \
             --stack-name production-distro \
-            --parameter-overrides PipelineID="${S3_BUCKET_NAME}" \
+            --parameter-overrides PipelineID="elasticbeanstalk-eu-central-1-669482944502" \
             --tags project=udapeople &
   
   create_and_deploy_front_end:
