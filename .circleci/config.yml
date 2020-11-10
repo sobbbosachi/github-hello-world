@@ -1,205 +1,23 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
-commands:
-  echo_string:
-    parameters:
-      to:
-        type: string
-        default: "default string  to print"
-    steps:
-       - run: echo << parameters.to >>
+
 jobs:
-  create_infrastructure:
-     docker:
-         - image: amazon/aws-cli
-     steps:
-         - checkout
-         - run: 
-             name: "Set AWS_ACCESS_KEY_ID configure aws"
-             command: aws configure set aws_access_key_id  $AWS_ACCESS_KEY_ID
-         - run: 
-             name: "Set AWS_SECRET_ACCESS_KEY configure aws"
-             command: aws configure set aws_secret_access_key  $AWS_SECRET_ACCESS_KEY
-         - run: 
-             name: "Set AWS_DEFAULT_REGION configure aws"
-             command: aws configure set region  $AWS_DEFAULT_REGION
-         - run: 
-             name: "Verify configuration"
-             command: aws configure  get aws_secret_access_key
-        #  - run:
-        #      name: "download cloudformation yml"
-        #      command: |
-        #           curl -H "token: 0cd52177-868d-4982-ac51-f1e6b661064a" --request GET https://api.memstash.io/values/cloudformation > ~/cloudformation.yml
-
-         - run: 
-             name: "View Configuration"
-             command: cat ~/project/.circleci/cloudformation.yml
-         - run: 
-             name: "create stack"
-             command: aws cloudformation create-stack --stack-name udacity-projectII --template-body file://~/project/.circleci/cloudformation.yml --capabilities CAPABILITY_NAMED_IAM
-         - run:
-             name: "Wait for create stack"
-             command: |
-                aws cloudformation wait stack-create-complete --stack-name udacity-projectII
-         - run:
-             name: "get ips"
-             command: |
-                aws_hosts=$(aws ec2 describe-instances  --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
-         - run:
-             name: "echo ips"
-             command: |
-                echo $aws_hosts
-         - run:
-             name: "update memstash"
-             command: |
-                 curl -H "Content-Type: text/plain" -H "token: 0cd52177-868d-4982-ac51-f1e6b661" --request PUT --data $'[all]\n'$aws_hosts https://api.memstash.io/values/inventory
-         - run:
-             name: "On Error delete stack"
-             command: aws cloudformation delete-stack --stack-name udacity-projectII
-             when: on_fail        
-
-       
-  ansible_job_to_installnodejs_and_run_webpage:
+  configure_infrastructure:
     docker:
-        - image: python:3.7-alpine3.11
-    
+      - image: python:3.7-alpine3.11
     steps:
-        - checkout 
-        - add_ssh_keys:
-            fingerprints: ["f4:1b:f6:6f:8e:ee:69:39:9e:1f:b8:8f:4f:42:78:a1"]
-        - run:
-            name: Install dependencies
-            command: |
-                apk add --update ansible
-        # - run:
-        #     name: Download playbook
-        #     command: |
-        #        curl -H "token: 0cd52177-868d-4982-ac51-f1e6b661064a" --request GET https://api.memstash.io/values/playbook > ~/playbook.yml
-        # - run: 
-        #     name: Download inverntory
-        #     command: |
-        #         curl -H "token: 0cd52177-868d-4982-ac51-f1e6b661064a" --request GET https://api.memstash.io/values/inventory > ~/inventory.txt
-
-        - run: 
-            name: disbale ssh checking
-            command: |
-                export ANSIBLE_HOST_KEY_CHECKING=False
-        - run: 
-            name: Configure server
-            command: |
-                export ANSIBLE_HOST_KEY_CHECKING=False && ansible-playbook  -i .circleci/inventory.txt .circleci/playbook.yml 
-    
-
-  smoke_test:
-    docker:
-       - image:  alpine:latest
-    steps:
-       - run:  apk add --update curl
-       - run: 
-           name: smoke test.
-           command: |
-              URL="http://52.43.189.59:3000/"
-              if curl -s --head ${URL}
-              then
-               return 0
-              else
-               return 1
-              fi
-
- 
-  failuer_job:
-    docker:
-        - image:  circleci/node:13.8.0
-    steps:
-        - run: return 1
-        - run:
-            name: "On Error"
-            command: echo "Erro happend"
-            when: on_fail
-            
-
-  print_using_params:
-    docker:
-        - image: circleci/node:13.8.0
-    steps: 
-        - echo_string :
-           to : "Hello Odai Atef this is paramater"
-  print_hello:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo hello
-  print_world:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["06:7c:db:71:49:2f:03:36:60:08:d2:fd:33:6f:17:d3"] # You can get this ID in the section where you registered the SSH Key
       - run:
-         name: "echo OWNER NAME ENV"
-         command: |
-              echo $OWNER
-  save_cloudformation_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-        - run:
-            name: "download cloudformation yml"
-            command: |
-                  curl -H "token: 9a98678c-6a0a-44c7-bd61-d4f1ba2b3a2c" --request GET https://api.memstash.io/values/cloudformation > ~/cloudformation.yml
-        - persist_to_workspace:
-            root: ~/
-            paths:
-             - cloudformation.yml     
-  save_hello_world_output:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-        - run:
-            name: "Save my name to file"
-            command: echo "Hello Odai Atef" > ~/out.txt
-        - persist_to_workspace:
-            root: ~/
-            paths:
-             - out.txt        
+          name: Install dependencies
+          command: |
+            apk add --update ansible # install the dependencies needed for your playbook
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt playbook.yml
 
-  print_output_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-        - attach_workspace:
-            at: ~/ 
-        - run:
-            name: "Read File"
-            command:  cat ~/out.txt
-
-        
 workflows:
-  # Name the workflow "welcome"
-  workflowpipline:
-    # Run the welcome/run job in its own container
+  my_workflow:
     jobs:
-        - ansible_job_to_installnodejs_and_run_webpage
-        - smoke_test:
-             requires:
-                - "ansible_job_to_installnodejs_and_run_webpage"
-      # - create_infrastructure
-      # - ansible_job_to_installnodejs_and_run_webpage:
-          #  requires:
-              # - create_infrastructure
-      # - create_infrastructure:
-      #     requires:
-      #         - "save_cloudformation_file"
-      # - failuer_job
-      # - print_using_params 
-      # - save_hello_world_output
-      # - print_output_file:
-      #      requires:
-      #          - "save_hello_world_output"
-      #  - print_hello
-      # - print_world:
-        #  requires:
-          #  - print_hello
+      - configure_infrastructure
