@@ -21,7 +21,7 @@ jobs:
             --template-file cloudfront.yml \
             --stack-name production-distro \
             --parameter-overrides PipelineID="${S3_BUCKET_NAME}" \
-            --tags project=udapeople &
+            --tags project=udapeople
   
   create_and_deploy_front_end:
     docker:
@@ -67,7 +67,9 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - create_infrastructure
+      - create_infrastructure:
+          requires:
+            - create_infrastructure
       - get_last_deployment_id
       - create_and_deploy_front_end
       - promote_to_production:
