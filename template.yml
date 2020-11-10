@@ -1,17 +1,23 @@
-Resources:
-  Ec2Instance:
-    Type: 'AWS::EC2::Instance'
-    Properties:
-      SecurityGroups:
-      - Ref: InstanceSecurityGroup
-      KeyName: Shovon
-      ImageId: 'ami-00a205cb8e06c3c4e' # you may need to find out what instance types are available in your region - use https://cloud-images.ubuntu.com/locator/ec2/
-  InstanceSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupDescription: Enable SSH access via port 22
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '22'
-        ToPort: '22'
-        CidrIp: 0.0.0.0/0
+---
+- name: "configuration play."
+  hosts: shovon
+  user: ubuntu
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - ansible_host_key_checking: false
+    - ansible_stdout_callback: yaml
+
+  pre_tasks:
+    - name: "wait 600 seconds for target connection to become reachable/usable."
+      wait_for_connection:
+
+    - name: "install python for Ansible."
+      become: true
+      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
+      changed_when: false
+
+    - setup:
+  roles:
+    - configure-prometheus-node-exporter
+    - configure-server1
