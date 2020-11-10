@@ -20,21 +20,11 @@ jobs:
             aws cloudformation deploy \
               --template-file template.yml \
               --stack-name my-stack
-  smoke_test:
-      docker:
-        - image: amazon/aws-cli
-      steps:
-        - checkout
-        - run:
-            name: simulate error
-            command: |
-               return 1
-        - destroy_environment
-      when: on_fail
+      - run: return 1
+      - destroy_environment
+        when: on_fail
+
 workflows:
   my_workflow:
     jobs:
       - create_infrastructure
-      - smoke_test:
-          requires:
-            - create_infrastructure
