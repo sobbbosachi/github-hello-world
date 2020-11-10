@@ -1,77 +1,34 @@
 version: 2.1
-commands:
-  destroy_environment:
-    steps:
-      - run:
-          name: Destroy environment
-          command: |
-            aws cloudformation delete-stack --stack-name prod-${CIRCLE_WORKFLOW_ID}
-          when: on_fail
-
 jobs:
-  create_infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Ensure backend infrastructure exist
-          command: |
-            aws cloudformation deploy \
-            --template-file cloudfront.yml \
-            --stack-name production-distro \
-            --parameter-overrides PipelineID="${S3_BUCKET_NAME}" \
-            --tags project=udapeople &
-  
   create_and_deploy_front_end:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: create_and_deploy_front_end
-          command: |
-            aws cloudformation deploy \
+      - run: |
+          aws cloudformation deploy \
             --template-file bucket.yml \
             --stack-name "${CIRCLE_WORKFLOW_ID}" \
-            --parameter-overrides PipelineID="${S3_BUCKET_NAME:0:7}"
-      - run: aws s3 sync . s3://"${S3_BUCKET_NAME:0:7}" --delete
+            --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+      - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
 
-  get_last_deployment_id:
+  promote_to_production:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: get_last_deployment_id
-          command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-            --no-paginate --output text
-
-  promote_to_production:
-      docker:
-      - image: amazon/aws-cli
-      steps:
-        - checkout
-        - run:
-            name: create_and_deploy_front_end
-            command: |
-              aws cloudformation deploy \
-              --template-file cloudfront.yml \
-              --stack-name production-distro \
-              --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+      - run: |
+          aws cloudformation deploy \
+            --template-file cloudformation.yml \
+            --stack-name cloudfront \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
 
 
 
 workflows:
   my_workflow:
     jobs:
-      - create_infrastructure
-      - get_last_deployment_id
-      - create_and_deploy_front_end:
-          requires:
-            - create_infrastructure
-      - promote_to_production:
-          requires: 
-            - create_and_deploy_front_end
+        - create_and_deploy_front_end
+        - promote_to_production:
+            requires:
+              - create_and_deploy_front_end
